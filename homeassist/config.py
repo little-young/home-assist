@@ -14,3 +14,6 @@ class ReturnCode(Enum):
 class CacheDataBase(Enum):
     MEM_DB = 1
     MEM_DB_EXP_SECS = 3600
+
+SECRET_KEY = "abf123b514d4278a28d5c8129a86bfc833003fcb"
+
