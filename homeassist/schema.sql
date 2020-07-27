@@ -19,6 +19,9 @@ CREATE TABLE IF NOT EXISTS mvp.t_property
 (
     id  BIGINT PRIMARY KEY AUTOINCREMENT,
     property_name  TEXT UNIQUE NOT NULL,
+    legal_person  TEXT NOT NULL,
+    license_no    TEXT NOT NULL,
+    level        INTEGER NOT NULL DEFAULT 0,
     contact_name TEXT NOT NULL,
     contact_number TEXT NOT NULL,
     email TEXT,

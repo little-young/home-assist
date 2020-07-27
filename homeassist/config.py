@@ -15,5 +15,9 @@ class CacheDataBase(Enum):
     MEM_DB = 1
     MEM_DB_EXP_SECS = 3600
 
+
+
 SECRET_KEY = "abf123b514d4278a28d5c8129a86bfc833003fcb"
 
+# DB_ENGINE_URL = "mysql+pymysql://<username>:<password>@<host>/<dbname>[?<options>]"
+DB_ENGINE_URL = "mysql+pymysql://root:5562asdf@localhost:3306/world?charset=utf8"
