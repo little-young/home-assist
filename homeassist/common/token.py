@@ -5,11 +5,11 @@
 from flask import request, jsonify, current_app
 from itsdangerous import TimedJSONWebSignatureSerializer
 import functools
-from homeassist.config import ReturnCode
+from homeassist.config import ReturnCode,SECRET_KEY
 
 # 第一个参数是内部的私钥
 # 第二个参数是有效期(秒)
-_s = TimedJSONWebSignatureSerializer(current_app.config["SECRET_KEY"], expires_in=3600)
+_s = TimedJSONWebSignatureSerializer(SECRET_KEY, expires_in=3600)
 
 def create_token(id,type):
     '''

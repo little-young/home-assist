@@ -2,7 +2,6 @@
 # @file  : db.py
 # @author: xiaoyang.wang
 # @date  : 2020/7/11
-import pymysql
 import threading
 import click
 from sqlalchemy import create_engine
@@ -58,9 +57,6 @@ def init_app(app):
     """
     app.teardown_appcontext(close_mysql_db)
     app.cli.add_command(init_db_command)
-
-
-
 
 
 def row2dict(r):

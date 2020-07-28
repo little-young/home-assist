@@ -23,7 +23,7 @@ from . import Base
 
 class Member(Base):
     __tablename__ = 't_member'                #表名称
-    id = Column(Integer, primary_key=True) # primary_key=True设置主键
+    id = Column(Integer, index=True, primary_key=True) # primary_key=True设置主键
     name = Column(String(32), index=True, nullable=False) #index=True创建索引， nullable=False不为空。
     nick_name = Column(String(32), default='用户')
     password = Column(Text, nullable=False)

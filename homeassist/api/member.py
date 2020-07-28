@@ -17,7 +17,7 @@ from homeassist.common import token
 # to do
 ## 加上物业公司权限管理
 
-api_auth_bp = Blueprint("api.member", __name__, url_prefix="/api/member")
+api_member_bp = Blueprint("api.member", __name__, url_prefix="/api/member")
 
 MEM_ROLE_DICT = {
     1: "admin",
@@ -26,7 +26,7 @@ MEM_ROLE_DICT = {
     99: "visitor"
 }
 
-@api_auth_bp.route("/login", methods=("GET", "POST", "HEAD", "OPTIONS"))
+@api_member_bp.route("/login", methods=("GET", "POST", "HEAD", "OPTIONS"))
 def login():
     if request.method == "POST":
         data = request.get_json()
@@ -51,7 +51,7 @@ def login():
         return jsonify(code=ReturnCode.FAIL.value, msg=err)
 
 
-@api_auth_bp.route("/regist_staff", methods=("GET", "POST", "HEAD", "OPTIONS"))
+@api_member_bp.route("/regist_staff", methods=("GET", "POST", "HEAD", "OPTIONS"))
 @token.login_required
 def regist_staff():
     if request.method == "POST":
@@ -80,7 +80,7 @@ def regist_staff():
         flash(err)
         return jsonify(code=ReturnCode.FAIL.value, msg=err)
 
-@api_auth_bp.route("/mem_list", methods=("GET", "POST", "HEAD", "OPTIONS"))
+@api_member_bp.route("/mem_list", methods=("GET", "POST", "HEAD", "OPTIONS"))
 @token.login_required
 def mem_list():
     db_conn = get_mysql_db()
@@ -94,11 +94,11 @@ def mem_list():
                    data={"member":mems})
 
 
-@api_auth_bp.route("/logout", methods=("GET", "POST", "HEAD", "OPTIONS"))
+@api_member_bp.route("/logout", methods=("GET", "POST", "HEAD", "OPTIONS"))
 def logout():
     return jsonify(code=ReturnCode.SUCCESS.value)
 
-@api_auth_bp.route("/mem_modify_pwd", methods=("GET", "POST", "HEAD", "OPTIONS"))
+@api_member_bp.route("/mem_modify_pwd", methods=("GET", "POST", "HEAD", "OPTIONS"))
 @token.login_required
 def mem_modify_pwd():
     if request.method == "POST":

@@ -43,11 +43,11 @@ def create_app(test_config=None):
         pass
 
     # import API蓝图
-    from homeassist.api.member import api_auth_bp
+    from homeassist.api.member import api_member_bp
 
     # register the database commands & register blueprint
     db.init_app(app)
-    app.register_blueprint(api_auth_bp)
+    app.register_blueprint(api_member_bp)
 
     @app.route("/")
     def index():
