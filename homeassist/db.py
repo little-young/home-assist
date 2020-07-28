@@ -4,9 +4,10 @@
 # @date  : 2020/7/11
 import pymysql
 import threading
-import sqlalchemy
+import click
 from sqlalchemy import create_engine
-from sqlalchemy.engine.base import Engine
+from flask.cli import with_appcontext
+from homeassist.models import *
 
 from homeassist import config
 
@@ -23,10 +24,43 @@ def get_mysql_db():
                                         pool_size=5,   #连接池大小
                                         pool_timeout=30,#连接池如果没有连接了，最长等待时间
                                         pool_recycle=-1,#多久之后对连接池中连接进行一次回收
+                                        # detect_types=pymysql.cursors.DictCursor,
+                                        # cursorclass=pymysql.cursors.DictCursor
         )
-        # THREAD_LOCAL.db.
 
     return THREAD_LOCAL.db
+
+def close_mysql_db(e=None):
+    """If this request connected to the database, close the
+    connection.
+    """
+    global THREAD_LOCAL
+    if "db" not in THREAD_LOCAL.__dict__:
+        return
+    if THREAD_LOCAL.db:
+        THREAD_LOCAL.db.close()
+        THREAD_LOCAL.db = None
+
+def init_db():
+    db = get_mysql_db()
+    Base.metadata.create_all(db)
+
+@click.command("init-db")
+@with_appcontext
+def init_db_command():
+    """Clear existing indicator and create new tables."""
+    init_db()
+    click.echo("Initialized the database.")
+
+def init_app(app):
+    """Register database functions with the Flask app. This is called by
+    the application factory.
+    """
+    app.teardown_appcontext(close_mysql_db)
+    app.cli.add_command(init_db_command)
+
+
+
 
 
 def row2dict(r):

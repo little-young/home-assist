@@ -4,10 +4,8 @@
 # @date  : 2020/7/22
 
 import datetime
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from homeassist import db
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, UniqueConstraint, Index, BIGINT
+from . import Base
 
 # CREATE TABLE IF NOT EXISTS mvp.t_member
 # (
@@ -23,7 +21,7 @@ from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, Uniq
 #     EXTEND_JSON TEST
 # );
 
-class Member(db.Model):
+class Member(Base):
     __tablename__ = 't_member'                #表名称
     id = Column(Integer, primary_key=True) # primary_key=True设置主键
     name = Column(String(32), index=True, nullable=False) #index=True创建索引， nullable=False不为空。
