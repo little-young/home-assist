@@ -15,6 +15,18 @@ from homeassist.common import token
 api_community_bp = Blueprint("api.community", __name__, url_prefix="/api/community")
 
 
+def get_community_info_func(community_id):
+    db_conn = get_mysql_db()
+    cmnt = db_conn.execute(
+        "SELECT id as community_id,community_name,property_id,status,"
+        " address,contact_name,contact_number,create_time"
+        " FROM mvp.t_community_base "
+        " WHERE id=? and is_delete=0",
+        (community_id,)
+    ).fetchone()
+    cmnt = serialize_row(cmnt)
+    return cmnt
+
 @api_community_bp.route("/community_list", methods=("GET", "POST", "HEAD", "OPTIONS"))
 @token.login_required
 def community_list():
@@ -89,16 +101,7 @@ def get_community_info():
         req_data = request.get_json()
         cmnt_id = req_data["community_id"]
 
-        db_conn = get_mysql_db()
-        cmnt = db_conn.execute(
-            "SELECT id as community_id,community_name,property_id,status,"
-            " address,contact_name,contact_number,create_time"
-            " FROM mvp.t_community_base "
-            " WHERE id=? and is_delete=0",
-            (cmnt_id,)
-        ).fetchone()
-
-        cmnt = serialize_row(cmnt)
+        cmnt = get_community_info_func(cmnt_id)
 
     return jsonify(code=ReturnCode.SUCCESS.value, data=cmnt)
 
@@ -110,26 +113,43 @@ def add_community_building():
     if request.method == "POST":
         req_data = request.get_json()
         cmnt_id = req_data["community_id"]
+        operatior = req_data["member_id"]
         bds = req_data["building"]
 
+        cmnt = get_community_info_func(cmnt_id)
+        cmnt_name = cmnt["community_name"]
+
         db_conn = get_mysql_db()
-        # db_Session = sessionmaker(bind=db_conn)
-        # db_session = db_Session()
+        db_session_class = sessionmaker(bind=db_conn)
+        db_session = db_session_class()
+
         err = None
 
         try:
-            for bd in bds:
-                db_conn.execute(
-                    "INSERT INTO t_community_building "
-                    " ()"
-                    " VALUES()",
-                    (bd[""],)
-                )
-                db_conn.commit()
+            to_db_data = []
+            if isinstance(bds, list):
+                for bd in bds:
+                    to_db_data.append(
+                        {"building_no": bd["building_no"],
+                         "building_name": bd["building_name"],
+                         "community_id": cmnt_id,
+                         "community_name": cmnt_name,
+                         "floor_size": bd.get("floor_size"),
+                         "create_operatior": operatior}
+                    )
+            db_session.execute(
+                "INSERT INTO t_community_building "
+                " (building_no,building_name,community_id,community_name,floor_size,create_operatior)"
+                " VALUES (:building_no,:building_name,:community_id,:community_name,:floor_size,:create_operatior)",
+                to_db_data
+            )
+            db_session.commit()
         except Exception as ex:
             err = str(ex)
+            db_session.rollback()
 
+        db_session.close()
         if err:
-            return 
+            return jsonify(code=ReturnCode.FAIL.value, msg=err)
 
-    return
+    return jsonify(code=ReturnCode.SUCCESS.value, msg="")

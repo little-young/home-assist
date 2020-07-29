@@ -70,10 +70,9 @@ def add_staff():
 
         if err is None:
             db_conn.execute(
-                "INSERT INTO mvp.t_member (name, password, role, property_id) VALUES (?, ?, ?, ?)",
+                "INSERT INTO mvp.t_member (name, password, role, property_id) VALUES (%s, %s, %s, %s)",
                 (name, generate_password_hash("123456"), 12, property_id),
             )
-            db_conn.commit()
 
             return jsonify(code=ReturnCode.SUCCESS.value, msg="")
 
