@@ -135,12 +135,12 @@ def add_community_building():
                          "community_id": cmnt_id,
                          "community_name": cmnt_name,
                          "floor_size": bd.get("floor_size"),
-                         "create_operatior": operatior}
+                         "create_operator": operatior}
                     )
             db_session.execute(
                 "INSERT INTO t_community_building "
-                " (building_no,building_name,community_id,community_name,floor_size,create_operatior)"
-                " VALUES (:building_no,:building_name,:community_id,:community_name,:floor_size,:create_operatior)",
+                " (building_no,building_name,community_id,community_name,floor_size,create_operator)"
+                " VALUES (:building_no,:building_name,:community_id,:community_name,:floor_size,:create_operator)",
                 to_db_data
             )
             db_session.commit()
