@@ -36,7 +36,7 @@ def login():
         err = None
 
         mem = db_conn.execute(
-            "SELECT id FROM mvp.t_member WHERE name = ?", (name,)
+            "SELECT id FROM mvp.t_member WHERE name = ? and is_delete=0", (name,)
         ).fetchone()
         if not mem:
             err = f"{name} is not registered."
@@ -47,13 +47,13 @@ def login():
         if err is None:
             return jsonify(code=ReturnCode.SUCCESS.value,
                            data={"token": token.create_token(mem["id"], "member")})
-        flash(err)
+        # flash(err)
         return jsonify(code=ReturnCode.FAIL.value, msg=err)
 
 
-@api_member_bp.route("/regist_staff", methods=("GET", "POST", "HEAD", "OPTIONS"))
+@api_member_bp.route("/add_staff", methods=("GET", "POST", "HEAD", "OPTIONS"))
 @token.login_required
-def regist_staff():
+def add_staff():
     if request.method == "POST":
         # name,property_id,role=12
         # create_time,update_time解决方案
@@ -63,7 +63,7 @@ def regist_staff():
         db_conn = get_mysql_db()
         err = None
 
-        if (db_conn.execute("SELECT id FROM mvp.t_member WHERE name = ?", (name,)).fetchone()
+        if (db_conn.execute("SELECT id FROM mvp.t_member WHERE name = ? and is_delete=0", (name,)).fetchone()
                 is not None
         ):
             err = "User {0} is already registered.".format(name)
@@ -77,21 +77,33 @@ def regist_staff():
 
             return jsonify(code=ReturnCode.SUCCESS.value, msg="")
 
-        flash(err)
+        # flash(err)
         return jsonify(code=ReturnCode.FAIL.value, msg=err)
 
 @api_member_bp.route("/mem_list", methods=("GET", "POST", "HEAD", "OPTIONS"))
 @token.login_required
 def mem_list():
-    db_conn = get_mysql_db()
-    mems = db_conn.execute(
-        "SELECT id, name, nick_name, role, create_time"
-        " FROM mvp.t_member "
-        " ORDER BY id ASC"
-    ).fetchall()
-    mems = serialize_row(mems)
-    return jsonify(code=ReturnCode.SUCCESS.value,
-                   data={"member":mems})
+    if request.method == "POST":
+        req_data = request.get_json()
+        ppt_id = req_data["property_id"]
+        # mem_id = req_data["id"]
+        db_conn = get_mysql_db()
+        # ppt_id = db_conn.execute(
+        #     "SELECT property_id FROM mvp.t_member WHERE id=? and is_delete=0",
+        #     (mem_id,)
+        # ).fetchone()[0]
+        mems = db_conn.execute(
+            "SELECT id, name, nick_name, role, create_time"
+            " FROM mvp.t_member "
+            " WHERE property_id=?  and is_delete=0"
+            " ORDER BY id ASC",
+            (ppt_id,)
+        ).fetchall()
+
+        mems = serialize_row(mems)
+
+        return jsonify(code=ReturnCode.SUCCESS.value,
+                       data={"member": mems})
 
 
 @api_member_bp.route("/logout", methods=("GET", "POST", "HEAD", "OPTIONS"))
@@ -111,7 +123,7 @@ def mem_modify_pwd():
         err = None
 
         mem = db_conn.execute(
-            "SELECT id FROM mvp.t_member WHERE id = ? AND password = ?",
+            "SELECT id FROM mvp.t_member WHERE id = ? AND password = ?  and is_delete=0",
             (mem_id, generate_password_hash(pwd),)
         ).fetchone()
 
@@ -124,7 +136,7 @@ def mem_modify_pwd():
                 err = str(e)
         else:
             err = "密码错误"
-        if err:
-            return jsonify(code=ReturnCode.FAIL.value,msg=err)
-        else:
+        if not err:
             return jsonify(code=ReturnCode.SUCCESS.value)
+
+        return jsonify(code=ReturnCode.FAIL.value, msg=err)
