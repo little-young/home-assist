@@ -46,4 +46,3 @@ class Property(Base):
 
     def __repr__(self):
         return '[member {},{}]'.format(self.id, self.property_name)
-

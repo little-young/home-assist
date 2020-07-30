@@ -1,3 +1,4 @@
+# encoding: utf-8
 from time import time
 from homeassist.util.error import Error
 

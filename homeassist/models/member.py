@@ -21,6 +21,7 @@ from . import Base
 #     EXTEND_JSON TEST
 # );
 
+
 class Member(Base):
     __tablename__ = 't_member'                #表名称
     id = Column(Integer, index=True, primary_key=True) # primary_key=True设置主键

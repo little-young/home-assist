@@ -50,6 +50,7 @@ class CommumityBase(Base):
     def __repr__(self):
         return '[community {},{}]'.format(self.id, self.community_name)
 
+
 class CommumityBuilding(Base):
     __tablename__ = 't_community_building'                #表名称
 

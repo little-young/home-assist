@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-sudo yum install python-virtualenv
+python3 -m venv ${venv_name}
 
 # to do

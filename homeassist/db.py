@@ -26,7 +26,6 @@ def get_mysql_db():
                                         # detect_types=pymysql.cursors.DictCursor,
                                         # cursorclass=pymysql.cursors.DictCursor
         )
-
     return THREAD_LOCAL.db
 
 def close_mysql_db(e=None):

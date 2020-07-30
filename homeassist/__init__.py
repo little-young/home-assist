@@ -69,4 +69,3 @@ def create_app(test_config=None):
     scheduler.init_app(app)
     scheduler.start()
     return app
-

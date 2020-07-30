@@ -8,6 +8,7 @@ import csv
 import os
 
 
+
 def iterate_csv(path):
     with open(path) as f:
         is_header = True

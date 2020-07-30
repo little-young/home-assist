@@ -61,7 +61,6 @@ CREATE TABLE IF NOT EXISTS mvp.t_community_base
 --    is_delete  TINYINT,
 --    EXTEND_JSON TEXT
 --);
-
 CREATE TABLE IF NOT EXISTS mvp.t_community_building
 (
     id  BIGINT PRIMARY KEY AUTOINCREMENT,
