@@ -23,7 +23,7 @@ export DATA_ROOT=/data/prod/homeassist/
 
 export DATABASE="${DATA_ROOT}/homeassist.sqlite"
 
-
+ENV=dev
 VERSION=v1.0.1
 
 if [[ ! -d ${LOG_DIR} ]]; then
